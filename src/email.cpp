@@ -32,10 +32,11 @@ void Email::setup(){
   curl_easy_setopt(this->curl, CURLOPT_USE_SSL, (long)CURLUSESSL_ALL);
   curl_easy_setopt(this->curl, CURLOPT_PORT, 587);
   curl_easy_setopt(this->curl, CURLOPT_MAIL_FROM, this->username.c_str());
+  curl_easy_setopt(this->curl, CURLOPT_READFUNCTION, payload_source);
+  curl_easy_setopt(this->curl, CURLOPT_READDATA, &this->upload_ctx);
+  curl_easy_setopt(this->curl, CURLOPT_UPLOAD, 1L);
   // curl_easy_setopt(this->curl, CURLOPT_VERBOSE, 1L);
   
-  this->recipients = curl_slist_append(this->recipients, this->username.c_str());
-  curl_easy_setopt(this->curl, CURLOPT_MAIL_RCPT, this->recipients); 
 }
 
 size_t Email::payload_source(char* ptr, size_t size, size_t nmemb, void* userp){
@@ -61,20 +62,18 @@ size_t Email::payload_source(char* ptr, size_t size, size_t nmemb, void* userp){
   return 0;
 }
 
-void Email::send(std::string ip_addr, std::string time){
+void Email::send(std::string dest_email, std::string ip_addr, std::string time){
   if ((this->username.empty()) || (this->password.empty())){
     std::cerr << "[ERROR] class Email not configured. Use Email.configure() first!" << std::endl;
     exit(1);
   }
 
   std::string message = "Dear Coordinators,\r\n\r\nThis email is generated to inform you that there was a power supply interruption at observatory causing the system to restart at " + time + ".\r\n\r\nThe new IP address of the system is: " + ip_addr + "\r\n\r\nRegards,\r\n\r\nObservatory RaspberryPi\r\n";
-  // std::string message = "Hello";
   this->payload_text = this->payload_text + message;
   email_payload_text = this->payload_text.c_str();
 
-  curl_easy_setopt(this->curl, CURLOPT_READFUNCTION, payload_source);
-  curl_easy_setopt(this->curl, CURLOPT_READDATA, &this->upload_ctx);
-  curl_easy_setopt(this->curl, CURLOPT_UPLOAD, 1L);
+  this->recipients = curl_slist_append(this->recipients, dest_email.c_str());
+  curl_easy_setopt(this->curl, CURLOPT_MAIL_RCPT, this->recipients); 
 
   this->res = curl_easy_perform(this->curl);
   if (res != CURLE_OK){

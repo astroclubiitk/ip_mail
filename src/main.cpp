@@ -12,7 +12,7 @@ int main(int argc, char** argv){
 
   Email email;
 	email.configure(EMAIL_ID, EMAIL_PASSWORD);
-	email.send(ip_addr, now);
+	email.send(DEST_EMAIL, ip_addr, now);
 
   return 0;
 }
