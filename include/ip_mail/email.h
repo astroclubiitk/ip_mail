@@ -27,5 +27,5 @@ class Email
     Email();
 
     void configure(const std::string username, const std::string password);
-    void send(std::string dest_email, std::string ip_addr, std::string time);
+    void send(std::string dest_email, std::string ip_addr, std::string endpoint, std::string time);
 };

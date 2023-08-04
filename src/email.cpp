@@ -62,13 +62,13 @@ size_t Email::payload_source(char* ptr, size_t size, size_t nmemb, void* userp){
   return 0;
 }
 
-void Email::send(std::string dest_email, std::string ip_addr, std::string time){
+void Email::send(std::string dest_email, std::string ip_addr, std::string endpoint, std::string time){
   if ((this->username.empty()) || (this->password.empty())){
     std::cerr << "[ERROR] class Email not configured. Use Email.configure() first!" << std::endl;
     exit(1);
   }
 
-  std::string message = "Dear Coordinators,\r\n\r\nThis email is generated to inform you that there was a power supply interruption at observatory causing the system to restart at " + time + ".\r\n\r\nThe new IP address of the system is: " + ip_addr + "\r\n\r\nRegards,\r\n\r\nObservatory RaspberryPi\r\n";
+  std::string message = "Dear Coordinators,\r\n\r\nThis email is generated to inform you that there was a power supply interruption at observatory causing the system to restart at " + time + ".\r\n\r\nThe new IP address of the system is: " + ip_addr + "\r\n" + "Ngrok tunneling to: " + endpoint + "\r\n\r\nRegards,\r\n\r\nObservatory RaspberryPi\r\n";
   this->payload_text = this->payload_text + message;
   email_payload_text = this->payload_text.c_str();
 

@@ -21,6 +21,7 @@ add_executable(${PROJECT_NAME}
   ./src/network.cpp
   ./src/time.cpp
   ./src/email.cpp
+  ./src/ngrok.cpp
 )
 
 target_include_directories(${PROJECT_NAME}
